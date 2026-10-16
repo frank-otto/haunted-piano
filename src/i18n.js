@@ -1,0 +1,42 @@
+export const T = {
+  en: {
+    title: 'Haunted Piano', sub: 'A ghost sits at the grand piano. Play along — if you dare.',
+    h1: 'Ghostly notes fall onto the keys — hit them right on the glowing line',
+    h2: 'Keys D F J K (and more), or tap the lanes. Chain hits for combos',
+    h3: 'Big combos wake the room: chandelier, candles, the ghost choir…',
+    h3k: 'Kids mode: three big lanes, slow notes, and the ghost always helps',
+    play: 'Play!', echo: 'Ghost Echo', free: 'Free play', kids: 'Kids mode', song: 'Song', difficulty: 'Difficulty',
+    score: 'Score', combo: 'Combo', acc: 'Accuracy', spirit: 'Spirit', best: 'Best', newBest: 'New highscore!', round: 'Round', lives: 'Candles',
+    d_easy: 'Easy', d_medium: 'Medium', d_hard: 'Hard',
+    q_low: 'Low', q_mid: 'Normal', q_high: 'High', q_ultra: 'Ultra', autoQ: 'Quality adjusted:',
+    perfect: 'Perfect!', great: 'Great', good: 'Good', miss: 'Miss',
+    hint: 'Hit the falling notes as they touch the glowing line', hintT: 'Tap the lanes as the notes touch the line', hintK: 'Tap a lane when its note reaches the line',
+    hintE: 'Listen to the ghost… then play it back', hintF: 'Play anything! Keys A–; and W E T Y U O P, or tap the keys',
+    yourTurn: 'Your turn!', listen: 'Listen…', echoOk: 'Spooky good!', echoBad: 'Wrong key…',
+    choir: 'The ghost choir sings!', chand: 'The chandelier swings!', storm: 'Thunder!', failed: 'The ghost took over the piano…',
+    over: 'Bravo, maestro!', kidsOver: 'What a concert!', freeOver: 'Encore!', echoOver: 'The ghost is impressed!',
+    grade: 'Grade', name: 'Your name', again: 'Play again', card: 'Save score card', share: 'Share', menu: 'Menu', back: 'Menu',
+    cardTag: 'Can you play the haunted piano?', cardPlay: 'Play free in your browser',
+    notes: 'notes', maxCombo: 'max combo', copied: 'Link copied!', saved: 'Card saved!'
+  },
+  de: {
+    title: 'Haunted Piano', sub: 'Ein Geist sitzt am Flügel. Spiel mit — wenn du dich traust.',
+    h1: 'Geisternoten fallen auf die Tasten — triff sie genau auf der leuchtenden Linie',
+    h2: 'Tasten D F J K (und mehr) oder tippe auf die Bahnen. Treffer in Folge geben Combos',
+    h3: 'Große Combos wecken den Saal: Kronleuchter, Kerzen, der Geisterchor…',
+    h3k: 'Kindermodus: drei große Bahnen, langsame Noten, der Geist hilft immer',
+    play: 'Spielen!', echo: 'Geister-Echo', free: 'Frei spielen', kids: 'Kindermodus', song: 'Stück', difficulty: 'Schwierigkeit',
+    score: 'Punkte', combo: 'Combo', acc: 'Genauigkeit', spirit: 'Geist', best: 'Rekord', newBest: 'Neuer Rekord!', round: 'Runde', lives: 'Kerzen',
+    d_easy: 'Leicht', d_medium: 'Mittel', d_hard: 'Schwer',
+    q_low: 'Niedrig', q_mid: 'Normal', q_high: 'Hoch', q_ultra: 'Ultra', autoQ: 'Qualität angepasst:',
+    perfect: 'Perfekt!', great: 'Super', good: 'Gut', miss: 'Daneben',
+    hint: 'Triff die Noten, wenn sie die leuchtende Linie berühren', hintT: 'Tippe auf die Bahnen, wenn die Noten die Linie berühren', hintK: 'Tippe auf eine Bahn, wenn ihre Note die Linie erreicht',
+    hintE: 'Hör dem Geist zu… und spiel es nach', hintF: 'Spiel, was du willst! Tasten A–Ö und W E T Z U O P, oder tippe auf die Tasten',
+    yourTurn: 'Du bist dran!', listen: 'Hör zu…', echoOk: 'Schaurig gut!', echoBad: 'Falsche Taste…',
+    choir: 'Der Geisterchor singt!', chand: 'Der Kronleuchter schwingt!', storm: 'Donner!', failed: 'Der Geist hat den Flügel übernommen…',
+    over: 'Bravo, Maestro!', kidsOver: 'Was für ein Konzert!', freeOver: 'Zugabe!', echoOver: 'Der Geist ist beeindruckt!',
+    grade: 'Note', name: 'Dein Name', again: 'Nochmal', card: 'Punktekarte speichern', share: 'Teilen', menu: 'Menü', back: 'Menü',
+    cardTag: 'Kannst du den Geisterflügel spielen?', cardPlay: 'Kostenlos im Browser spielen',
+    notes: 'Noten', maxCombo: 'max. Combo', copied: 'Link kopiert!', saved: 'Karte gespeichert!'
+  }
+};
