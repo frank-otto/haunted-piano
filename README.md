@@ -2,7 +2,7 @@
 
 A gothic 3D Halloween rhythm game. A ghost sits at a concert grand in a candle-lit music room – moonlight through stained glass, floating sheet music, portraits whose eyes follow every note. Play along with Bach, Grieg, Chopin and the Dies Irae: hit the falling notes right on the glowing line, or repeat the ghost's phrases from memory. Big combos wake the room: the chandelier swings, a ghost choir rises and sings with you, lightning strikes.
 
-**Play:** https://frank-otto.github.io/haunted-piano/
+**Play:** [online version (GitHub Pages)](https://frank-otto.github.io/haunted-piano/)
 
 ## How to play
 - **Song mode:** notes fall in coloured lanes onto the keys. Press **D F Space J K** (Easy D F J K, Hard S D F J K L, also 1–6) or tap the lanes. Perfect / Great / Good / Miss, combo multiplier, accuracy and a grade from S to D. Missed notes drain the spirit bar – at zero the ghost takes over.

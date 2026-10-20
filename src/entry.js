@@ -11,7 +11,7 @@ import { SONGS, SONG_ORDER, parseSong } from './songs.js';
 import * as A from './audio.js';
 import { T } from './i18n.js';
 
-const URL_TXT = 'frank-otto.github.io/haunted-piano';
+const URL_TXT = '@Frank_AI_Lab';
 const $ = id => document.getElementById(id);
 const ls = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 let seed = (window.__hpSeed || (Date.now() & 0xffffff)) >>> 0;
@@ -293,7 +293,7 @@ async function saveCard(share) {
   k.font = Fo(400, 32); txt(t('cardPlay') + ' · ' + URL_TXT, CW / 2, 1290, 'rgba(255,255,255,.92)');
   const blob = await new Promise(r => c.toBlob(r, 'image/png')); window.__hpCard = { w: c.width, h: c.height };
   const file = new File([blob], 'haunted-piano.png', { type: 'image/png' });
-  if (share && navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], text: `Haunted Piano — ${t('cardTag')} https://${URL_TXT}/` }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+  if (share && navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], text: `Haunted Piano — ${t('cardTag')} ${URL_TXT}` }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'haunted-piano.png'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast(t('saved'));
 }
 
