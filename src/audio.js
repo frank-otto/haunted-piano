@@ -15,10 +15,14 @@ function makeIR(sec = 2.6) { // room reverb impulse: decaying, slightly darkenin
   for (let c = 0; c < 2; c++) { const d = ir.getChannelData(c); let lp = 0; for (let i = 0; i < n; i++) { const t = i / sr; lp += (rnd() - lp) * (0.5 - .4 * t / sec); d[i] = lp * Math.exp(-t * 2.6) * (i < sr * .012 ? i / (sr * .012) : 1); } }
   return ir;
 }
+// iOS Safari: create/resume inside the tap, play a 1-sample silent buffer (unlocks output), ask for 'playback' (ignores the mute switch)
+function kick(c) { try { const b = c.createBuffer(1, 1, 22050), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.start(0); } catch (e) {} }
+export function audioState() { return ctx ? ctx.state : 'none'; }
 export async function unlock() {
-  if (ctx) { if (ctx.state === 'suspended') ctx.resume().catch(() => {}); return; }
+  try { if (navigator.audioSession && navigator.audioSession.type !== 'playback') navigator.audioSession.type = 'playback'; } catch (e) {}
+  if (ctx) { if (ctx.state !== 'running') ctx.resume().catch(() => {}); return; }
   const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
-  ctx = new AC(); master = ctx.createGain(); master.gain.value = muted ? 0 : .9;
+  ctx = new AC(); kick(ctx); if (ctx.state !== 'running') ctx.resume().catch(() => {}); master = ctx.createGain(); master.gain.value = muted ? 0 : .9;
   const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -12; comp.ratio.value = 2.5; master.connect(comp); comp.connect(ctx.destination);
   dry = ctx.createGain(); dry.gain.value = 1; dry.connect(master);
   conv = ctx.createConvolver(); conv.buffer = makeIR(); wet = ctx.createGain(); wet.gain.value = .32; conv.connect(wet); wet.connect(master);

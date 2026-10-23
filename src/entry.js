@@ -27,8 +27,10 @@ const LANE_KEYS = { 3: ['KeyF', 'Space', 'KeyJ'], 4: ['KeyD', 'KeyF', 'KeyJ', 'K
 const KEY_LABEL = { KeyS: 'S', KeyD: 'D', KeyF: 'F', KeyJ: 'J', KeyK: 'K', KeyL: 'L', Space: '␣' };
 const LANE_COL = ['#b48cff', '#7ad0ff', '#7affc8', '#ffd27a', '#ff9ac8', '#c8d8ff'];
 const FREE_KEYS = { KeyA: 60, KeyW: 61, KeyS: 62, KeyE: 63, KeyD: 64, KeyF: 65, KeyT: 66, KeyG: 67, KeyY: 68, KeyZ: 68, KeyH: 69, KeyU: 70, KeyJ: 71, KeyK: 72, KeyO: 73, KeyL: 74, KeyP: 75, Semicolon: 76, Quote: 77 };
+// language follows the phone/browser (German devices → DE, else EN) until the player picks one with the DE/EN toggle
+function autoLang() { try { const l = (navigator.languages && navigator.languages[0]) || navigator.language || ''; return /^de\b/i.test(l) ? 'de' : 'en'; } catch (e) { return 'en'; } }
 const S = {
-  state: 'menu', mode: 'play', lang: ls.get('hp-lang', 'en'), diff: ls.get('hp-diff', 'medium'), kids: ls.get('hp-kids', '0') === '1', song: ls.get('hp-song', 'toccata'), q: ls.get('hp-q', ''), qUser: !!ls.get('hp-q', ''),
+  state: 'menu', mode: 'play', lang: (ls.get('hp-lang', '') || autoLang()), diff: ls.get('hp-diff', 'medium'), kids: ls.get('hp-kids', '0') === '1', song: ls.get('hp-song', 'toccata'), q: ls.get('hp-q', ''), qUser: !!ls.get('hp-q', ''),
   score: 0, gt: 0, combo: 0, maxCombo: 0, hits: 0, judged: 0, accSum: 0, perfect: 0, spirit: 1, songT: 0, newBest: false, best: 0, shake: 0, lives: 3, round: 0, freeN: 0, failed: false,
   name: ls.get('hp-name', 'Player') || 'Player', pel: 0, pressed: 0
 };
@@ -53,7 +55,7 @@ const C = createChoir(scene, 5);
 const keyGlow = {};
 let composer, bloom;
 function buildComposer() {
-  if (composer) composer.dispose();
+  if (composer) { composer.passes.forEach(p => p.dispose && p.dispose()); composer.dispose(); } // passes (bloom/bokeh render targets) are not freed by composer.dispose()
   composer = new EffectComposer(renderer); composer.addPass(new RenderPass(scene, camera));
   bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), .3 * QUALITY[S.q].bloom, .35, .9); composer.addPass(bloom);
   composer.addPass(new OutputPass());
@@ -76,7 +78,7 @@ function resize() {
 const HIT_Y = KY + .035, TOP_Y = KY + .8, LZ = KZF - .045, SPAN = .74;
 const laneX = i => -SPAN / 2 + (i + .5) * SPAN / D().lanes;
 const laneGroup = new THREE.Group(); scene.add(laneGroup);
-function labelTex(txt, col) { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); g.font = '700 74px Fredoka, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = 14; g.strokeStyle = 'rgba(10,6,24,.95)'; g.strokeText(txt, 64, 68); g.fillStyle = col; g.fillText(txt, 64, 68); const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; return tx; }
+function labelTex(txt, col) { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); g.font = '700 74px Fredoka, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = 14; g.strokeStyle = 'rgba(10,6,24,.95)'; g.strokeText(txt, 64, 68); g.fillStyle = col; g.fillText(txt, 64, 68); const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; tx.userData.own = true; return tx; }
 const noteTex = (() => { const c = document.createElement('canvas'); c.width = 128; c.height = 96; const g = c.getContext('2d');
   const gr = g.createRadialGradient(64, 48, 4, 64, 48, 60); gr.addColorStop(0, 'rgba(255,255,255,.95)'); gr.addColorStop(.35, 'rgba(255,255,255,.55)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 96);
   g.fillStyle = 'rgba(20,10,40,.85)'; g.font = '700 50px serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('♪', 64, 50); return new THREE.CanvasTexture(c); })();
@@ -84,7 +86,8 @@ const trailTex = (() => { const c = document.createElement('canvas'); c.width = 
 const ringTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); g.strokeStyle = 'rgba(255,255,255,.9)'; g.lineWidth = 7; g.beginPath(); g.arc(64, 64, 52, 0, 7); g.stroke(); const gr = g.createRadialGradient(64, 64, 30, 64, 64, 62); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(.8, 'rgba(255,255,255,.18)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
 let lanes = [];
 function buildLanes() {
-  while (laneGroup.children.length) laneGroup.remove(laneGroup.children[0]); lanes = [];
+  // free the previous lanes (own geometries/materials + their key-label textures; shared ring/trail/note textures stay)
+  while (laneGroup.children.length) { const o = laneGroup.children[0]; laneGroup.remove(o); o.traverse(c => { if (c.geometry) c.geometry.dispose(); if (c.material) { if (c.material.map && c.material.map.userData.own) c.material.map.dispose(); c.material.dispose(); } }); } lanes = [];
   const n = D().lanes, w = SPAN / n;
   const bar = new THREE.Mesh(new THREE.PlaneGeometry(SPAN + .02, .006), new THREE.MeshBasicMaterial({ color: '#d8c8ff', transparent: true, opacity: .7, depthWrite: false })); bar.position.set(0, HIT_Y, LZ); laneGroup.add(bar);
   for (let i = 0; i < n; i++) {
@@ -363,8 +366,9 @@ function loop(now) { const dt = (now - last) / 1000; last = now; if (!window.__h
 requestAnimationFrame(loop);
 const laneScreen = i => { const p = new THREE.Vector3(laneX(i), HIT_Y, LZ).project(camera); return { x: (p.x * .5 + .5) * VW, y: (-p.y * .5 + .5) * VH }; };
 const keyScreen = m => { const p = new THREE.Vector3(keyX(m), KY + .005, KZF - .03).project(camera); return { x: (p.x * .5 + .5) * VW, y: (-p.y * .5 + .5) * VH }; };
-window.__hp = { S, start, end, step: (dt, n = 1) => { for (let i = 0; i < n; i++) step(dt); render(); }, stepq: (dt, n = 1) => { for (let i = 0; i < n; i++) step(dt); }, log: A.log, quality: q => q ? applyQuality(q, true) : S.q, renderer,
+window.__hp = { S, audioState: () => A.audioState(), start, end, step: (dt, n = 1) => { for (let i = 0; i < n; i++) step(dt); render(); }, stepq: (dt, n = 1) => { for (let i = 0; i < n; i++) step(dt); }, log: A.log, quality: q => q ? applyQuality(q, true) : S.q, renderer,
   chart: () => chart.map(n => ({ t: n.t, lane: n.lane, m: n.m, hit: n.hit, missed: n.missed })), press: lanePress, lanes: () => D().lanes, laneScreen, keyScreen, freeNote,
   next: () => chart.find(n => !n.hit && !n.missed), echo: () => echo && { phase: echo.phase, seq: echo.seq.map(n => n.lane), k: echo.k }, choir: () => C.a, chand: () => W.chandSwing,
   songs: SONG_ORDER, diff: () => S.diff, cam: () => ({ p: camera.position.toArray(), near: camera.near }), react: () => W.react, eyes: () => W.eyes.map(e => [e.rotation.x, e.rotation.y]) };
+$('top').prepend($('btnQuit')); // phones: the finish button sits in the corner row instead of overlapping it
 document.body.classList.add('ready');

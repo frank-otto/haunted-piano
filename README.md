@@ -14,7 +14,7 @@ Songs: Toccata in D minor (J. S. Bach), In the Hall of the Mountain King (E. Gri
 
 Difficulty **Easy / Medium / Hard** (lanes, fall speed, timing windows, ×1–1.5 points), remembered with a highscore per song and difficulty. **Kids mode:** 3 big lanes, slower, generous timing, missed notes are played by the ghost – never fails.
 
-Extras: English by default with a **DE** toggle (remembered), shareable **score card** (PNG, 1080×1350), **quality levels** (Low / Normal / High / Ultra, auto step-down), mobile layout with a lowered lid, a ghost playing in the menu.
+Extras: the language follows your phone or browser (German devices get German, everything else English), with a small **DE/EN** toggle (remembered), shareable **score card** (PNG, 1080×1350), **quality levels** (Low / Normal / High / Ultra, auto step-down), mobile layout with a lowered lid, a ghost playing in the menu.
 
 ## Tech
 Three.js (WebGL): a modelled grand (bentside rim, gold plate, strings, 88 pivoting keys, hammers, lid on its prop stick), translucent fresnel ghost hands and choir, stained-glass windows with volumetric moon shafts, candelabras with flickering point lights, a swinging crystal chandelier, ACES tone mapping and a restrained bloom (no glare). Real recorded piano samples with a convolution reverb. Bundled with esbuild into one classic script, so it runs straight from `file://`.
@@ -24,6 +24,7 @@ Open `index.html` (on a Mac you can also double-click `start.command`). Rebuild 
 
 ## Tests
 `python3 test/test_game.py` (Playwright + Chrome, headless WebGL, served over a local web server): keyboard and touch hits, judgements, misses and failing, combo events (chandelier, choir), song end and grades, highscores, PNG card, EN/DE memory, difficulties, kids, echo and free mode, mobile layout, glare and camera checks, no console errors, no synth sounds.
+`python3 test/test_mobile.py`: 8 phone configurations (iPhone 13 / 8 / SE in WebKit, Pixel 7 in Chromium, portrait and landscape). It checks that every button is tappable and at least 44 px, that nothing is cut off or scrolls, the auto language, one tap to play with sound, touch control and flat memory.
 
 ## Credits
 All sounds are recorded CC0 samples – piano from FreePats "Upright Piano KW" (see `LICENSES/SOUNDS.md`). Three.js (MIT). Font: Fredoka (SIL Open Font License 1.1).
